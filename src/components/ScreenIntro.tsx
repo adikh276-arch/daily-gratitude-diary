@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import cherryBlossom from "@/assets/cherry-blossom.png";
 
 interface ScreenIntroProps {
   onStart: () => void;
@@ -17,9 +18,9 @@ const ScreenIntro = ({ onStart }: ScreenIntroProps) => {
         initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.2, duration: 0.6 }}
-        className="text-5xl mb-6"
+        className="mb-6"
       >
-        🌸
+        <img src={cherryBlossom} alt="Cherry blossom" className="w-36 h-36 rounded-full object-cover mx-auto" />
       </motion.div>
 
       <h1 className="font-heading text-[22px] font-medium text-foreground mb-3">

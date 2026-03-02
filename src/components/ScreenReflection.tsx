@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
+import cherryBlossom from "@/assets/cherry-blossom.png";
 
 interface ScreenReflectionProps {
   onSave: (feeling: string) => void;
@@ -17,7 +18,7 @@ const ScreenReflection = ({ onSave, onBack }: ScreenReflectionProps) => {
       transition={{ duration: 0.5 }}
       className="flex flex-col items-center min-h-screen px-5 py-10 text-center"
     >
-      <div className="text-4xl mb-6">🌸</div>
+      <img src={cherryBlossom} alt="Cherry blossom" className="w-28 h-28 rounded-full object-cover mb-6" />
 
       <h1 className="font-heading text-[22px] font-medium text-foreground mb-3">
         Pause and Notice
