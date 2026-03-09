@@ -1,13 +1,16 @@
-import { Pool } from '@neondatabase/serverless';
+import { Pool, neonConfig } from '@neondatabase/serverless';
+
+// Use HTTP instead of WebSockets for better compatibility in environments with proxy/firewall issues
+neonConfig.fetchConnection = true;
 
 const connectionString = import.meta.env.VITE_DATABASE_URL;
 
 if (!connectionString) {
-    console.error('VITE_DATABASE_URL is not defined in environment variables.');
+    console.warn('VITE_DATABASE_URL is not defined in environment variables. Database connection will likely fail.');
 }
 
 export const pool = new Pool({
-    connectionString,
+    connectionString: connectionString || '',
 });
 
 export const dbRequest = async <T = any>(query: string, params: any[] = []): Promise<T[]> => {
@@ -21,6 +24,8 @@ export const dbRequest = async <T = any>(query: string, params: any[] = []): Pro
 };
 
 export const initSchema = async () => {
+    if (!connectionString) return;
+
     try {
         const tables = await pool.query(`
       SELECT tablename FROM pg_catalog.pg_tables 
