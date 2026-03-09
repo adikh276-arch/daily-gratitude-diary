@@ -1,8 +1,5 @@
 import { neon, neonConfig, Pool } from '@neondatabase/serverless';
 
-// Essential for browser environments: uses HTTP/fetch instead of WebSockets.
-neonConfig.fetchConnection = true;
-
 // Suppress the warning about running SQL in the browser
 neonConfig.disableWarningInBrowsers = true;
 
@@ -26,9 +23,10 @@ export const dbRequest = async <T = any>(query: string, params: any[] = []): Pro
 
     try {
         // Correct way to call with parameters as per the error message: use sql.query
-        // @ts-ignore - neon driver types can be tricky in some versions
-        const result = await sql.query(query, params);
-        return result.rows as T[];
+        // @ts-ignore - neon driver types can be tricky
+        const result = await (sql as any).query(query, params);
+        // The neon query function returns an array of rows by default (unless fullResults is configured)
+        return (Array.isArray(result) ? result : result.rows) as T[];
     } catch (error: any) {
         console.error('Database query error:', error.message || error);
         throw error;

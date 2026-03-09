@@ -60,8 +60,17 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
 
                 if (storedUserId) {
                     setIsAuthResolved(true);
-                    // Try background db init just in case
-                    initSchema().catch(() => { });
+                    // Ensure the user exists in DB as well to prevent FK constraint issues
+                    initSchema().then(async () => {
+                        try {
+                            const existingUser = await dbRequest("SELECT * FROM users WHERE id = $1", [storedUserId]);
+                            if (existingUser.length === 0) {
+                                await dbRequest("INSERT INTO users (id) VALUES ($1)", [storedUserId]);
+                            }
+                        } catch (e) {
+                            console.warn("DB user sync skipped:", e);
+                        }
+                    }).catch(() => { });
                     return;
                 }
 
