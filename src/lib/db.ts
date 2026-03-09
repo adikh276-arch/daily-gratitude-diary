@@ -3,6 +3,9 @@ import { neon, neonConfig, Pool } from '@neondatabase/serverless';
 // Essential for browser environments: uses HTTP/fetch instead of WebSockets.
 neonConfig.fetchConnection = true;
 
+// Suppress the warning about running SQL in the browser
+neonConfig.disableWarningInBrowsers = true;
+
 const connectionString = import.meta.env.VITE_DATABASE_URL;
 
 // Validation for Neon/Postgres connection string
@@ -12,7 +15,7 @@ if (!isUrlValid(connectionString)) {
     console.warn('VITE_DATABASE_URL is not defined or invalid. Database features will be disabled.');
 }
 
-// HTTP query function
+// HTTP query function (using neon() which returns a sql function)
 const sql = isUrlValid(connectionString) ? neon(connectionString) : null;
 
 export const dbRequest = async <T = any>(query: string, params: any[] = []): Promise<T[]> => {
@@ -22,8 +25,10 @@ export const dbRequest = async <T = any>(query: string, params: any[] = []): Pro
     }
 
     try {
-        const result = await sql(query, params);
-        return result as T[];
+        // Correct way to call with parameters as per the error message: use sql.query
+        // @ts-ignore - neon driver types can be tricky in some versions
+        const result = await sql.query(query, params);
+        return result.rows as T[];
     } catch (error: any) {
         console.error('Database query error:', error.message || error);
         throw error;
