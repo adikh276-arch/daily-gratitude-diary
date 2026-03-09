@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
 import ScreenIntro from "@/components/ScreenIntro";
 import ScreenGratitude from "@/components/ScreenGratitude";
 import ScreenReflection from "@/components/ScreenReflection";
 import ScreenClosing from "@/components/ScreenClosing";
 import ScreenPastEntries from "@/components/ScreenPastEntries";
+import { dbRequest } from "@/lib/db";
 
 interface GratitudeEntry {
   grateful: string;
@@ -22,29 +23,56 @@ type Screen = "intro" | "gratitude" | "reflection" | "closing" | "past";
 const Index = () => {
   const [screen, setScreen] = useState<Screen>("intro");
   const [currentGratitudes, setCurrentGratitudes] = useState<GratitudeEntry[]>([]);
-  const [pastEntries, setPastEntries] = useState<SavedEntry[]>(() => {
-    try {
-      const saved = localStorage.getItem("gratitude-entries");
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
-  });
+  const [pastEntries, setPastEntries] = useState<SavedEntry[]>([]);
+  const userId = sessionStorage.getItem("user_id");
 
-  const saveEntry = (feeling: string) => {
+  useEffect(() => {
+    const fetchEntries = async () => {
+      if (!userId) return;
+      try {
+        const rows = await dbRequest<any>(
+          "SELECT date, gratitudes, feeling FROM gratitude_entries WHERE user_id = $1 ORDER BY created_at DESC",
+          [userId]
+        );
+        const formatted = rows.map(row => ({
+          ...row,
+          gratitudes: typeof row.gratitudes === 'string' ? JSON.parse(row.gratitudes) : row.gratitudes
+        }));
+        setPastEntries(formatted);
+      } catch (err) {
+        console.error("Failed to fetch entries:", err);
+      }
+    };
+    fetchEntries();
+  }, [userId]);
+
+  const saveEntry = async (feeling: string) => {
+    const validGratitudes = currentGratitudes.filter((e) => e.grateful.trim());
+    const dateStr = new Date().toLocaleDateString("en-US", {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+
     const entry: SavedEntry = {
-      date: new Date().toLocaleDateString("en-US", {
-        weekday: "long",
-        year: "numeric",
-        month: "long",
-        day: "numeric",
-      }),
-      gratitudes: currentGratitudes.filter((e) => e.grateful.trim()),
+      date: dateStr,
+      gratitudes: validGratitudes,
       feeling,
     };
-    const updated = [entry, ...pastEntries];
-    setPastEntries(updated);
-    localStorage.setItem("gratitude-entries", JSON.stringify(updated));
+
+    if (userId) {
+      try {
+        await dbRequest(
+          "INSERT INTO gratitude_entries (user_id, date, feeling, gratitudes) VALUES ($1, $2, $3, $4)",
+          [userId, dateStr, feeling, JSON.stringify(validGratitudes)]
+        );
+      } catch (err) {
+        console.error("Failed to save entry:", err);
+      }
+    }
+
+    setPastEntries([entry, ...pastEntries]);
     setScreen("closing");
   };
 
