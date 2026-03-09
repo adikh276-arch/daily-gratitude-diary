@@ -38,7 +38,7 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
                             try {
                                 await initSchema();
                                 const existingUser = await dbRequest("SELECT * FROM users WHERE id = $1", [userId]);
-                                if (existingUser.length === 0) {
+                                if (existingUser && existingUser.length === 0) {
                                     await dbRequest("INSERT INTO users (id) VALUES ($1)", [userId]);
                                 }
                             } catch (dbErr) {
@@ -63,8 +63,8 @@ const AuthGuard = ({ children }: AuthGuardProps) => {
                     // Ensure the user exists in DB as well to prevent FK constraint issues
                     initSchema().then(async () => {
                         try {
-                            const existingUser = await dbRequest("SELECT * FROM users WHERE id = $1", [storedUserId]);
-                            if (existingUser.length === 0) {
+                            const res = await dbRequest("SELECT * FROM users WHERE id = $1", [storedUserId]);
+                            if (res && res.length === 0) {
                                 await dbRequest("INSERT INTO users (id) VALUES ($1)", [storedUserId]);
                             }
                         } catch (e) {

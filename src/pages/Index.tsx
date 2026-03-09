@@ -34,11 +34,13 @@ const Index = () => {
           "SELECT date, gratitudes, feeling FROM gratitude_entries WHERE user_id = $1 ORDER BY created_at DESC",
           [userId]
         );
-        const formatted = rows.map(row => ({
-          ...row,
-          gratitudes: typeof row.gratitudes === 'string' ? JSON.parse(row.gratitudes) : row.gratitudes
-        }));
-        setPastEntries(formatted);
+        if (rows && Array.isArray(rows)) {
+          const formatted = rows.map(row => ({
+            ...row,
+            gratitudes: typeof row.gratitudes === 'string' ? JSON.parse(row.gratitudes) : row.gratitudes
+          }));
+          setPastEntries(formatted);
+        }
       } catch (err) {
         console.error("Failed to fetch entries:", err);
       }
