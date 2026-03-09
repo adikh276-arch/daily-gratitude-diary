@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import cherryBlossom from "@/assets/cherry-blossom.png";
+import { useTranslation } from "react-i18next";
 
 interface ScreenClosingProps {
   onViewPast: () => void;
@@ -7,6 +8,8 @@ interface ScreenClosingProps {
 }
 
 const ScreenClosing = ({ onViewPast, onDone }: ScreenClosingProps) => {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -25,18 +28,18 @@ const ScreenClosing = ({ onViewPast, onDone }: ScreenClosingProps) => {
       </motion.div>
 
       <h1 className="font-heading text-[22px] font-medium text-foreground mb-3">
-        You Took a Moment
+        {t('closing_title')}
       </h1>
 
       <div className="space-y-5 mb-12 max-w-sm">
         <p className="text-foreground leading-[1.7]">
-          Taking time to reflect is an act of care.
+          {t('closing_text_1')}
         </p>
         <p className="text-foreground leading-[1.7]">
-          You can return to this space anytime.
+          {t('closing_text_2')}
         </p>
         <p className="text-muted-foreground leading-[1.7] italic">
-          Even small gratitude counts.
+          {t('closing_italic')}
         </p>
       </div>
 
@@ -47,7 +50,7 @@ const ScreenClosing = ({ onViewPast, onDone }: ScreenClosingProps) => {
           onClick={onViewPast}
           className="w-full h-[54px] bg-transparent border-2 border-primary text-primary rounded-[30px] font-heading font-medium text-base transition-colors duration-150"
         >
-          View Past Entries
+          {t('view_past')}
         </motion.button>
 
         <motion.button
@@ -56,7 +59,7 @@ const ScreenClosing = ({ onViewPast, onDone }: ScreenClosingProps) => {
           onClick={onDone}
           className="w-full h-[54px] bg-primary text-primary-foreground rounded-[30px] font-heading font-medium text-base shadow-[0_4px_20px_rgba(195,142,180,0.25)] active:bg-primary-pressed transition-colors duration-150"
         >
-          Done
+          {t('done')}
         </motion.button>
       </div>
     </motion.div>

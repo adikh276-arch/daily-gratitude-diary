@@ -1,11 +1,14 @@
 import { motion } from "framer-motion";
 import cherryBlossom from "@/assets/cherry-blossom.png";
+import { useTranslation } from "react-i18next";
 
 interface ScreenIntroProps {
   onStart: () => void;
 }
 
 const ScreenIntro = ({ onStart }: ScreenIntroProps) => {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -24,25 +27,25 @@ const ScreenIntro = ({ onStart }: ScreenIntroProps) => {
       </motion.div>
 
       <h1 className="font-heading text-[22px] font-medium text-foreground mb-3">
-        Daily Gratitude Diary
+        {t('app_title')}
       </h1>
 
       <p className="text-muted-foreground text-base mb-8">
-        Noticing Small Good Things
+        {t('app_subtitle')}
       </p>
 
       <div className="space-y-5 mb-12 max-w-sm">
         <p className="text-foreground leading-[1.7]">
-          Gratitude does not mean ignoring difficult emotions.
+          {t('intro_text_1')}
         </p>
         <p className="text-foreground leading-[1.7]">
-          It simply means gently noticing moments — big or small — that feel steady, comforting, or meaningful.
+          {t('intro_text_2')}
         </p>
         <p className="text-foreground leading-[1.7]">
-          Some days it may be something very small.
+          {t('intro_text_3')}
         </p>
         <p className="text-muted-foreground leading-[1.7] italic">
-          That is enough.
+          {t('intro_text_italic')}
         </p>
       </div>
 
@@ -52,7 +55,7 @@ const ScreenIntro = ({ onStart }: ScreenIntroProps) => {
         onClick={onStart}
         className="w-full max-w-sm h-[54px] bg-primary text-primary-foreground rounded-[30px] font-heading font-medium text-base shadow-[0_4px_20px_rgba(195,142,180,0.25)] active:bg-primary-pressed transition-colors duration-150"
       >
-        Start Today's Entry
+        {t('start_button')}
       </motion.button>
     </motion.div>
   );

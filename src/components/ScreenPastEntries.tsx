@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import cherryBlossom from "@/assets/cherry-blossom.png";
+import { useTranslation } from "react-i18next";
 
 interface PastEntry {
   date: string;
@@ -13,6 +14,8 @@ interface ScreenPastEntriesProps {
 }
 
 const ScreenPastEntries = ({ entries, onBack }: ScreenPastEntriesProps) => {
+  const { t } = useTranslation();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -24,12 +27,12 @@ const ScreenPastEntries = ({ entries, onBack }: ScreenPastEntriesProps) => {
       <img src={cherryBlossom} alt="Cherry blossom" className="w-28 h-28 rounded-full object-cover mb-6" />
 
       <h1 className="font-heading text-[22px] font-medium text-foreground mb-8">
-        Past Entries
+        {t('past_entries_title')}
       </h1>
 
       {entries.length === 0 ? (
         <p className="text-muted-foreground leading-[1.7]">
-          No entries yet. Start your first one today.
+          {t('no_entries')}
         </p>
       ) : (
         <div className="w-full max-w-sm space-y-4 mb-10">
@@ -56,7 +59,7 @@ const ScreenPastEntries = ({ entries, onBack }: ScreenPastEntriesProps) => {
               ))}
               {entry.feeling && (
                 <p className="text-muted-foreground text-sm italic pt-1 text-center">
-                  Feeling: {entry.feeling}
+                  {t('feeling_label')}{entry.feeling}
                 </p>
               )}
             </motion.div>
@@ -70,7 +73,7 @@ const ScreenPastEntries = ({ entries, onBack }: ScreenPastEntriesProps) => {
         onClick={onBack}
         className="w-full max-w-sm h-[54px] bg-primary text-primary-foreground rounded-[30px] font-heading font-medium text-base shadow-[0_4px_20px_rgba(195,142,180,0.25)] active:bg-primary-pressed transition-colors duration-150"
       >
-        Back
+        {t('back')}
       </motion.button>
     </motion.div>
   );
