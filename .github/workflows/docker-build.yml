@@ -27,6 +27,9 @@ jobs:
           platforms: linux/amd64
           tags: bunker.mantracare.com/lovable/daily_gratitude_journal:1.0
           build-args: |
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            NEON_PROJECT_ID=${{ secrets.NEON_PROJECT_ID }}
-            NEON_API_KEY=${{ secrets.NEON_API_KEY }}
+            DATABASE_URL=${{ secrets.DATABASE_URL || secrets.VITE_DATABASE_URL }}
+            NEON_PROJECT_ID=${{ secrets.NEON_PROJECT_ID || secrets.VITE_NEON_PROJECT_ID }}
+            NEON_API_KEY=${{ secrets.NEON_API_KEY || secrets.VITE_NEON_API_KEY }}
+            VITE_DATABASE_URL=${{ secrets.DATABASE_URL || secrets.VITE_DATABASE_URL }}
+            VITE_NEON_PROJECT_ID=${{ secrets.NEON_PROJECT_ID || secrets.VITE_NEON_PROJECT_ID }}
+            VITE_NEON_API_KEY=${{ secrets.NEON_API_KEY || secrets.VITE_NEON_API_KEY }}
